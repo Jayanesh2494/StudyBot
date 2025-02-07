@@ -1,0 +1,40 @@
+{
+  "name": "promodoroapp",
+  "version": "1.0.0",
+  "main": "expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@expo-google-fonts/bebas-neue": "^0.2.3",
+    "@expo/metro-runtime": "~3.2.3",
+    "@expo/vector-icons": "^14.0.4",
+    "@react-native-community/datetimepicker": "^8.3.0",
+    "@react-navigation/bottom-tabs": "^7.0.4",
+    "@react-navigation/native": "^7.0.3",
+    "expo": "^52.0.7",
+    "expo-app-loading": "^2.1.1",
+    "expo-av": "~14.0.7",
+    "expo-font": "~12.0.10",
+    "expo-status-bar": "~1.12.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.74.5",
+    "react-native-gesture-handler": "^2.21.0",
+    "react-native-get-random-values": "^1.11.0",
+    "react-native-reanimated": "^3.16.1",
+    "react-native-safe-area-context": "^4.14.0",
+    "react-native-screens": "^4.1.0",
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-web": "~0.19.10",
+    "react-navigation": "^4.4.4",
+    "react-navigation-stack": "^2.10.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
+  },
+  "private": true
+}

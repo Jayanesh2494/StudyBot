@@ -1,0 +1,37 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-error.log
+
+# Expo-specific files
+.expo/
+.expo-shared/
+
+# Metro bundler cache
+.metro/
+
+# Logs and OS-generated files
+logs/
+*.log
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.DS_Store
+
+# Babel cache
+.babel-cache/
+
+# Temporary files
+.temp/
+.tmp/
+
+# Environment variables (if any)
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*
+
+assets/*.mp3   
+assets/*.png   
