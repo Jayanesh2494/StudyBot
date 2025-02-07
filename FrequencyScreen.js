@@ -13,6 +13,10 @@ import song1 from "./assets/song1.mp3";
 import song2 from "./assets/song2.mp3";
 import song3 from "./assets/song3.mp3";
 import song4 from "./assets/song4.mp3";
+import image1 from "./assets/song1.jpeg";
+import image2 from "./assets/song2.gif";
+import image3 from "./assets/song3.jpeg";
+import image4 from "./assets/song4.jpeg";
 import rainfall from "./assets/rainfall.mp3";
 
 const songs = [
@@ -21,28 +25,28 @@ const songs = [
     title: "Song 1",
     artist: "Artist 1",
     uri: song1,
-    image: "https://placekitten.com/200/200", // Replace with your image URLs
+    image: {image1}, // Replace with your image URLs
   },
   {
     id: "2",
     title: "Song 2",
     artist: "Artist 2",
     uri: song2,
-    image: "https://placekitten.com/201/201",
+    image: {image2},
   },
   {
     id: "3",
     title: "Song 3",
     artist: "Artist 3",
     uri: song3,
-    image: "https://placekitten.com/202/202",
+    image: {image3},
   },
   {
     id: "4",
     title: "Song 4",
     artist: "Artist 4",
     uri: song4,
-    image: "https://placekitten.com/203/203",
+    image: {image4},
   },
   {
     id: "5",

@@ -3,99 +3,107 @@ import {
   View,
   Text,
   TouchableOpacity,
+  TextInput,
   StyleSheet,
   Alert,
+  Platform,
 } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { Audio } from "expo-av";
 
 const AlertPage = () => {
-  const [alertTime, setAlertTime] = useState(null); // Initially null until user sets time
-  const [showPicker, setShowPicker] = useState(false);
+  const [alertTime, setAlertTime] = useState(null);
+  const [alertName, setAlertName] = useState("");
+  const [selectedTime, setSelectedTime] = useState(null);
   const [sound, setSound] = useState(null);
-  const [alertTriggered, setAlertTriggered] = useState(false); // Prevent multiple alerts
 
   useEffect(() => {
-    const checkAlert = setInterval(async () => {
-      if (!alertTime) return; // Skip if no time is set
+    (async () => {
+      await Audio.requestPermissionsAsync();
+    })();
+  }, []);
 
+  useEffect(() => {
+    const checkAlarm = setInterval(async () => {
+      if (!alertTime) return;
       const now = new Date();
-      const alertDateTime = new Date(alertTime);
-
+      const alarmTime = new Date(alertTime);
       if (
-        now.getHours() === alertDateTime.getHours() &&
-        now.getMinutes() === alertDateTime.getMinutes() &&
-        now.getSeconds() === alertDateTime.getSeconds()
+        now.getHours() === alarmTime.getHours() &&
+        now.getMinutes() === alarmTime.getMinutes() &&
+        now.getSeconds() === alarmTime.getSeconds()
       ) {
-        if (!alertTriggered) {
-          setAlertTriggered(true);
-          await triggerAlert();
-        }
-      } else {
-        setAlertTriggered(false); // Reset flag once the second has passed
+        console.log("⏰ ALARM TRIGGERED!");
+        clearInterval(checkAlarm);
+        await triggerAlert();
       }
     }, 1000);
-
-    return () => clearInterval(checkAlert);
-  }, [alertTime, alertTriggered]);
+    return () => clearInterval(checkAlarm);
+  }, [alertTime]);
 
   const triggerAlert = async () => {
-    Alert.alert("⏰ Time's Up!", "Your alert time has been reached.");
+    Alert.alert("⏰ Alarm!", `Time for: ${alertName || "Unnamed Alarm"}`);
     try {
       const { sound } = await Audio.Sound.createAsync(
         require("./assets/buzzer.mp3")
       );
       setSound(sound);
       await sound.playAsync();
-
-      // Ensure the sound stops after playing
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.didJustFinish) {
-          sound.unloadAsync();
-        }
-      });
     } catch (error) {
       console.error("Error playing sound:", error);
     }
   };
 
-  const handleTimeChange = (event, selectedTime) => {
-    if (selectedTime) {
-      setAlertTime(selectedTime);
-      setAlertTriggered(false); // Reset alert flag when a new time is set
+  const handleSetAlert = () => {
+    if (!selectedTime) {
+      Alert.alert("⚠️ Error", "Please pick a time first!");
+      return;
     }
-    setShowPicker(false);
+    setAlertTime(selectedTime);
+    Alert.alert(
+      "✅ Alarm Set",
+      `Alarm for ${alertName || "Unnamed"} at ${selectedTime.toLocaleTimeString()}`
+    );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>⏰ Set Your Alert</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => setShowPicker(true)}
-      >
-        <Text style={styles.buttonText}>Pick Alert Time</Text>
-      </TouchableOpacity>
+      <Text style={styles.title}>⏰ Set Your Alarm</Text>
 
-      {showPicker && (
-        <DateTimePicker
-          value={alertTime || new Date()} // Default to current time
-          mode="time"
-          display="spinner"
-          is24Hour={false} // Enables AM/PM format
-          onChange={handleTimeChange}
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Alarm Name"
+        placeholderTextColor="#ccc"
+        value={alertName}
+        onChangeText={setAlertName}
+      />
+
+      {/* 🖥️ Web Version - Uses <input type="time"> */}
+      {Platform.OS === "web" ? (
+        <input
+          type="time"
+          onChange={(e) => setSelectedTime(new Date(`1970-01-01T${e.target.value}:00`))}
+          style={styles.webTimeInput}
         />
+      ) : (
+        // 📱 Mobile Version - Uses DateTimePicker
+        <TouchableOpacity style={styles.button} onPress={() => setShowPicker(true)}>
+          <Text style={styles.buttonText}>Pick Alarm Time</Text>
+        </TouchableOpacity>
       )}
+
+      {selectedTime && (
+        <Text style={styles.alertText}>
+          Selected Time: {selectedTime.toLocaleTimeString()}
+        </Text>
+      )}
+
+      <TouchableOpacity style={styles.button} onPress={handleSetAlert}>
+        <Text style={styles.buttonText}>Set Alert</Text>
+      </TouchableOpacity>
 
       {alertTime && (
         <Text style={styles.alertText}>
-          Alert Set for:{" "}
-          {new Date(alertTime).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: true,
-          })}
+          Alarm Set for: {new Date(alertTime).toLocaleTimeString()} ({alertName || "Unnamed Alarm"})
         </Text>
       )}
     </View>
@@ -114,10 +122,20 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginBottom: 20,
   },
+  input: {
+    backgroundColor: "#333",
+    color: "#fff",
+    width: "80%",
+    padding: 10,
+    marginBottom: 20,
+    borderRadius: 8,
+    textAlign: "center",
+  },
   button: {
     backgroundColor: "#1DB954",
     padding: 10,
     borderRadius: 8,
+    marginTop: 10,
   },
   buttonText: {
     color: "#fff",
@@ -127,6 +145,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 18,
     color: "#fff",
+  },
+  webTimeInput: {
+    padding: 10,
+    margin: 10,
+    fontSize: 18,
   },
 });
 
